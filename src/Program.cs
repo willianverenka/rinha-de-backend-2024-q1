@@ -26,18 +26,10 @@ app.MapPost("/clientes/{id:int}/transacoes", async (int id, [FromBody]TransacaoR
     var saldoCliente = await db.Saldos.FirstOrDefaultAsync(t => t.ClienteId == id);
     var cliente = await db.Clientes.FindAsync(id);
     if(saldoCliente == null || cliente == null) return Results.NotFound();
-    switch(transacao.Tipo)
-    {
-        case 'c':
-            saldoCliente.Valor -= transacao.Valor;
-            break;
-        case 'd':
-            if (cliente.Limite > transacao.Valor) return Results.BadRequest("O valor da transacao excede o limite.");
-            saldoCliente.Valor += transacao.Valor;
-            break;
-        default:
-            return Results.BadRequest();
-    }
+    int valorFinal = saldoCliente.Valor - transacao.Valor;
+    bool isCredito = transacao.Tipo == 'c', excedeLimite = valorFinal < cliente.Limite * -1;
+    if (isCredito && excedeLimite) return Results.UnprocessableEntity();
+    saldoCliente.Valor -= valorFinal; 
 
     await db.Transacoes.AddAsync(new Transacao()
     {
@@ -93,4 +85,3 @@ app.MapGet("/clientes/{id:int}/extrato", async (int id, AppDbContext db) =>
 });
 
 app.Run();
-
