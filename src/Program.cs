@@ -4,8 +4,19 @@ using rinha_de_backend_2024_q1.Context;
 using rinha_de_backend_2024_q1.Entities;
 
 var builder = WebApplication.CreateBuilder(args);
-var variablesDictionary = Environment.GetEnvironmentVariables(EnvironmentVariableTarget.User);
-builder.Services.AddDbContext<AppDbContext>(options => options.UseNpgsql($"Host=localhost;Port=5432;Pooling=true;Database={variablesDictionary["POSTGRES_DB"]};UserId={variablesDictionary["POSTGRES_USER"]};Password={variablesDictionary["POSTGRES_PASSWORD"]};"));
+bool containerizedApp = true;
+string connectionString;
+if (containerizedApp)
+{
+    var variablesDictionary = Environment.GetEnvironmentVariables(EnvironmentVariableTarget.Process);
+    connectionString = $"Host=db;Port=5432;Pooling=true;Database={variablesDictionary["POSTGRES_DB"]};UserId={variablesDictionary["POSTGRES_USER"]};Password={variablesDictionary["POSTGRES_PASSWORD"]};";
+}
+else
+{
+    connectionString = $"Host=localhost;Port=5432;Pooling=true;Database=postgres;UserId=postgres;Password=123;";
+}
+
+builder.Services.AddDbContext<AppDbContext>(options => options.UseNpgsql(connectionString));
 builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 // Add services to the container.
 
