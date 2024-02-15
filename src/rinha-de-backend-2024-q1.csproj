@@ -6,6 +6,7 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <InvariantGlobalization>true</InvariantGlobalization>
     <RootNamespace>rinha_de_backend_2024_q1</RootNamespace>
+    <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
   </PropertyGroup>
 
   <ItemGroup>
@@ -15,6 +16,24 @@
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
     <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="8.0.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Remove="Validation\**" />
+    <Compile Remove="Services\IValidationService.cs" />
+    <Compile Remove="Services\ValidationService.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Remove="Validation\**" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Remove="Validation\**" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Remove="Validation\**" />
   </ItemGroup>
 
 </Project>
